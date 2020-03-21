@@ -3,12 +3,8 @@
 }
 
 .connectionItem{
-    border-style: solid;
-    border-color: #B9BBBE;
-    border-width: thin;
-    border-radius: 5px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 5px;
 }
@@ -26,4 +22,12 @@
 
 .buttonGroup *{
     width: 150px;
+}
+
+.itemGoto {
+    margin-left: auto;
+}
+
+.itemText {
+    padding-left: 15px;
 }
