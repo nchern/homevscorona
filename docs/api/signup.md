@@ -7,7 +7,7 @@ Sign up endpoint
 ```http
 POST /signup
 
-Content-Type: application/problem+json
+Content-Type: application/json
 
 { "username": "name" , "password": "..."}
 ```
