@@ -20,8 +20,8 @@ Content-Type: application/problem+json
   {"type": "location", "time":"datetime",
   "details": {"locationID":"", "name":"...", "adress": "..."}},
   {"type": "person", "time":"datetime",
-  "details": {"companions_users":{"userID":"", "userName"],
-              "companions_non_users":["name"]}},
+  "details": {"companions_users":[{"userID":"", "userName"}],
+              "companions_non_users":[{"name"}]}},
   ]
 }
 ```
