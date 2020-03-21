@@ -23,7 +23,7 @@ Content-Type: application/problem+json
   "details": ["companions_users":["userID":"", "userName"],
               "companions_non_users":["name"]]},
   ]
-]}
+}
 ```
 
 ### Responses
