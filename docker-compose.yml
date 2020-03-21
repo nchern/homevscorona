@@ -1,0 +1,16 @@
+version: "3"
+
+volumes:
+    frontend-data:
+
+services:
+    frontend:
+        build:
+            context: frontend/.
+        restart: on-failure
+        ports:
+             - "80:5000"
+        expose:
+            - "5000"
+        volumes:
+            - frontend-data:/app
