@@ -1,0 +1,29 @@
+.connectionDay {
+    padding-top: 20px;
+}
+
+.connectionItem{
+    border-style: solid;
+    border-color: #B9BBBE;
+    border-width: thin;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.connectionItem p{
+    padding: 0;
+    margin: 0;
+}
+
+.buttonGroup {
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.buttonGroup *{
+    width: 150px;
+}
