@@ -1,8 +1,5 @@
 version: "3"
 
-volumes:
-    frontend-data:
-
 services:
     frontend:
         build:
@@ -12,5 +9,3 @@ services:
              - "80:5000"
         expose:
             - "5000"
-        volumes:
-            - frontend-data:/app
