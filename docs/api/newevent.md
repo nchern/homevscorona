@@ -30,7 +30,8 @@ Content-Type: application/json
 ```
 
 #### Details for location
-```{
+```
+{
      "location_id": "location-id-1",
       "name": "Rewe",
       "adress": "Berlin ...."
