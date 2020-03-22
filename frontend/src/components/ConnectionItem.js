@@ -8,7 +8,7 @@ export default class ConnectionItem extends Component {
                 <FiMapPin className="itemIcon"/>
                 <div className="itemText">
                     <p><b>{this.props.event.details.name}</b></p>
-                    <p>{this.props.event.time}・{this.props.event.details.adress}</p>
+                    <p>{new Date(this.props.event.time * 1000).toLocaleTimeString()}・{this.props.event.details.adress}</p>
                 </div>
                 <div className="itemGoto"><FiChevronRight/></div>
             </div>)
@@ -16,8 +16,8 @@ export default class ConnectionItem extends Component {
             return (<div className="connectionItem">
                     <FiUser className="itemIcon"/>
                     <div className="itemText">
-                        <p><b>Claudia, Gustav, + 3 others</b></p>
-                        <p>13:05・Glogauer Str. 9</p>
+                        <p><b>{this.props.event.details.users[0].name}</b></p>
+                        <p>{new Date(this.props.event.time * 1000).toLocaleTimeString()}・Glogauer Str. 9</p>
                     </div>
                     <div className="itemGoto"><FiChevronRight/></div>
                 </div>

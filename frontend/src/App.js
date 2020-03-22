@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {Layout} from './components/Layout';
 import Login from './components/Login';
 import Home from "./components/Home";
-import CheckInLocation from "./components/CheckInLocation";
-import CheckInPerson from "./components/CheckInPerson";
 import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 import './App.css';
 import Auth from "./components/Auth";
@@ -38,12 +36,6 @@ export default class App extends Component {
                   <Route path="/login">
                   <Login />
                   </Route>
-                  <PrivateRoute path="/checkin_person">
-                      <CheckInPerson/>
-                  </PrivateRoute>
-                  <PrivateRoute path="/checkin_location">
-                      <CheckInLocation/>
-                  </PrivateRoute>
                   <PrivateRoute path="/">
                       <Home/>
                   </PrivateRoute>
