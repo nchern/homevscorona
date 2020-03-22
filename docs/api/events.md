@@ -3,40 +3,49 @@ Endpoint for receiving all recent Events (maybe last 14days?) of a User
 ### Request:
 
 ```http
-GET /events
+POST /get_events
+Authorization: Bearer <token>
 
-## Required:
-UserId=[integer]
-AuthToken? (to be discussed)
+{"start_date": <datetime>, "end_date": <datetime>}  # Both fields are optional
 
-##Optional:
-(to be discussed)
-startdate=[datetime]
-enddate=[datetime]
+HTTP 200 OK
 
-Content-Type: application/problem+json
+Content-Type: application/json
 
-{"username":"...", "events": [
-  {"type": "location", "time":"datetime",
-  "details": {"locationID":"", "name":"...", "adress": "..."}},
-  {"type": "person", "time":"datetime",
-  "details": {"companions_users":[{"userID":"...", "userName":"..."}],
-              "companions_non_users":[{"name":"..."}]}},
+{
+  "user_name": "John Doe",
+  "events": [
+    {
+      "type": "location",
+      "time": "datetime",
+      "details": {
+        "location_id": "location-id-1",
+        "name": "Rewe",
+        "adress": "Berlin ...."
+      }
+    },
+    {
+      "type": "person",
+      "time": "datetime",
+      "details": {
+        "companions_users": [
+          {
+            "user_id": "user-id",
+            "user_name": "User regitered name"
+          }
+        ],
+        "companions_non_users": [
+          {
+            "name": "Sarah ."
+          }
+        ]
+      }
+    }
   ]
 }
 ```
 
-### Responses
-
-#### Sucess
-
-```http
-HTTP/1.1 200 OK
-
-{ "status": "200" }
-```
-
-
+### Error responses
 
 #### Client error
 ```http
