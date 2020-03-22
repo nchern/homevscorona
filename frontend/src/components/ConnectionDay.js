@@ -8,7 +8,9 @@ class ConnectionDay extends Component {
         if (no_events === 0) {
             return (<div className="connectionDay">
                 <p>{this.props.date}</p>
+                <div className="container">
                 <ConnectionItem event={"noEvent"}/>
+                </div>
             </div>)
         } else {
         return (
