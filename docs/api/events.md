@@ -3,7 +3,7 @@ Endpoint for receiving all recent Events (maybe last 14days?) of a User
 ### Request:
 
 ```http
-POST /get_events
+POST /api/get_events
 Authorization: Bearer <token>
 
 {"start_date": 12345678, "end_date": 12345678}  # Both fields are optional
