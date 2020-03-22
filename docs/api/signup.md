@@ -3,7 +3,7 @@ Sign up endpoint
 ### Request:
 
 ```http
-POST /signup
+POST /api/signup
 
 Authorization: Bearer <token>
 Content-Type: application/json
