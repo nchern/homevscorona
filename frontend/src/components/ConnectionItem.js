@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {FaChevronCircleRight, FaUser, FaSmile, FaMap} from "react-icons/all";
+import {FiChevronRight, FiUser, FiSmile, FiMapPin} from "react-icons/all";
 
 class ConnectionItem extends Component {
     render() {
@@ -7,21 +7,21 @@ class ConnectionItem extends Component {
             <div className="TMP">
             <div className="connectionItem">
                 {/*if this.props.event.type == "person"*/}
-                <FaUser/>
+                <FiUser className="itemIcon"/>
                 <div className="itemText">
                     <p><b>Claudia, Gustav, + 3 others</b></p>
-                    <p>13:05 * Glogauer Str. 9</p>
+                    <p>13:05・Glogauer Str. 9</p>
                 </div>
-                <div className="itemGoto"><FaChevronCircleRight/></div>
+                <div className="itemGoto"><FiChevronRight/></div>
             </div>
             <div className="connectionItem">
                 {/*if this.props.event.type == "location"*/}
-                <FaMap/>
+                <FiMapPin className="itemIcon"/>
                 <div className="itemText">
                     <p><b>Kater Blau</b></p>
-                    <p>13:05 * Glogauer Str. 9</p>
+                    <p>13:05・Glogauer Str. 9</p>
                 </div>
-                <div className="itemGoto"><FaChevronCircleRight/></div>
+                <div className="itemGoto"><FiChevronRight/></div>
             </div>
             <div className="connectionItem">
                 {/*if this.props.event.type == "athome"*/}
@@ -31,12 +31,12 @@ class ConnectionItem extends Component {
                 {/*    <p><b>Claudia, Gustav, + 3 others</b></p>*/}
                 {/*    <p>13:05 * Glogauer Str. 9</p>*/}
                 {/*</div>*/}
-                <FaSmile/>
+                <FiSmile className="itemIcon"/>
                 <div className="itemText">
                     <p><b>Du hast den ganzen Tag zuhause verbracht!</b></p>
                     <p> </p>
                 </div>
-                <div className="itemGoto"><FaChevronCircleRight/></div>
+                <div className="itemGoto"><FiChevronRight/></div>
             </div>
             </div>
         )
