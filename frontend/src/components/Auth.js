@@ -10,6 +10,9 @@ class Auth {
   isAuthenticated() {
     return this.authenticated;
   }
+  getToken() {
+      return this.token;
+  }
 }
 
 export default new Auth();

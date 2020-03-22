@@ -1,7 +1,8 @@
-import React, {Component, useState} from "react";
-import {Button, Container, Modal} from "react-bootstrap";
+import React, {Component} from "react";
+import {Button, Container} from "react-bootstrap";
 import ConnectionDay from "./ConnectionDay";
 import "./Home.css";
+import axios from "axios";
 
 var getDateArray = function() {
     const end = new Date();
@@ -27,11 +28,12 @@ class Home extends Component {
       };
 
      componentDidMount() {
-        fetch('https://6ca70b10-5803-40af-af91-41d37a0d9133.mock.pstmn.io/events')
+         axios.post('http://homevscorona.us.to/api/get_events')
         .then(res => res.json())
         .then((data) => {
+          console.log(data);
           this.setState({ events: data['events'],
-                                username: data['username']})
+                                username: data['user_name']})
         })
         .catch(console.log)
       }
@@ -45,7 +47,8 @@ class Home extends Component {
                     <Button size="lg" href="/checkin_person">Person</Button>
                     <Button size="lg" href="/checkin_location">Ort</Button>
                 </div>
-                {this.state.dates.map(element => <ConnectionDay date={element.toDateString()} events={"TestEvents"}/>)}
+                {this.state.dates.map(element => <ConnectionDay key={element.toDateString()} date={element.toDateString()} events={
+                    this.state.events.filter(event => event.time === (element.getTime() / 1000))}/>)}
             </Container>
         );
     }

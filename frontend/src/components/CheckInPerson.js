@@ -5,9 +5,9 @@ class CheckInPerson extends Component {
     render() {
         return (
             <div>
-                <h1>Wo bist du?</h1>
+                <h1>Mit wem bist du unterwegs?</h1>
                 <Form>
-                    <Form.Control placeholder="Suche nach Orten..."/>
+                    <Form.Control placeholder="Suche nach Fruenden..."/>
                 </Form>
                 <p>Zuletzt</p>
 

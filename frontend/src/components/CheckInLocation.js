@@ -1,17 +1,32 @@
 import React, {Component} from "react";
-import {Form} from "react-bootstrap";
+import {Container, Form} from "react-bootstrap";
+import {Button} from "react-bootstrap";
 
 class CheckInLocation extends Component {
     render() {
         return (
-            <div>
-                <h1>Wer ist bei dir?</h1>
+            <Container>
+                <h1>Wo bist du?</h1>
                 <Form>
-                    <Form.Control placeholder="Suche nach Personen..."/>
+                  <Form.Group >
+                    <Form.Label>Name des Ortes</Form.Label>
+                    <Form.Control placeholder="Rewe an der Hauptwache" />
+                  </Form.Group>
+                  <Form.Group >
+                    <Form.Label>Adresse</Form.Label>
+                    <Form.Control type="adress" placeholder="Zeil 106-110, 60313 Frankfurt am Main" />
+                  </Form.Group>
+                  <Form.Group controlId="formBasicCheckbox">
+                    <Form.Check type="checkbox" label="Check me out" />
+                  </Form.Group>
+                  <Button variant="primary" type="submit">
+                    Eintragen
+                  </Button>
                 </Form>
-                <p>Favoriten</p>
+                <br/>
+                <p>Deine letzten Orte</p>
 
-            </div>
+            </Container>
         );
     }
 }
