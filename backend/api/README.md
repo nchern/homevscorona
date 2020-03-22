@@ -16,7 +16,7 @@ make install # builds and installs the binary into $GOROOT/bin
 
 ```bash
 make docker-build
-docker run -ti --rm -p 8080:8080 api
+docker run -ti --rm -p 8080:8080 api # runs api service in the port 8080
 ```
 
 ### With Golang installed
