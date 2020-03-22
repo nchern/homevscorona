@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 	"github.com/nchern/homevscorona/backend/api/pkg/store"
 )
@@ -18,9 +17,9 @@ var (
 type UserStore interface {
 	Create(email string, u *model.User) error
 	GetByEmail(email string) (*model.User, error)
-	GetById(id uuid.UUID) (*model.User, error)
-	SaveEvent(userID uuid.UUID, event *model.Event) error
-	GetEvents(userID uuid.UUID) ([]*model.Event, error)
+	GetById(id string) (*model.User, error)
+	SaveEvent(userID string, event *model.Event) error
+	GetEvents(userID string) ([]*model.Event, error)
 }
 
 // Start runs the api server

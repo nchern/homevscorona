@@ -18,7 +18,7 @@ func signup(r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 
-	user := &model.User{Id: uuid.New(), Email: token.Email, Name: req.Name}
+	user := &model.User{ID: uuid.New().String(), Email: token.Email, Name: req.Name}
 	err = users.Create(token.Email, user)
 	if err != nil {
 		return nil, err

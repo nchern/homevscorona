@@ -45,11 +45,11 @@ func newEvent(r *http.Request) (interface{}, error) {
 		return nil, fmt.Errorf("%s not found", token.Email)
 	}
 
-	event := &model.Event{Id: uuid.New(), Timestamp: time.Unix(req.Date, 0)}
+	event := &model.Event{ID: uuid.New().String(), Timestamp: time.Unix(req.Date, 0)}
 	for _, u := range req.Details.Users {
 		event.Users = append(event.Users, u)
 	}
-	if err := users.SaveEvent(user.Id, event); err != nil {
+	if err := users.SaveEvent(user.ID, event); err != nil {
 		return nil, err
 	}
 

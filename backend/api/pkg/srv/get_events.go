@@ -19,7 +19,7 @@ func getEvents(r *http.Request) (interface{}, error) {
 	if user == nil {
 		return nil, fmt.Errorf("%s not found", token.Email)
 	}
-	events, err := users.GetEvents(user.Id)
+	events, err := users.GetEvents(user.ID)
 	if err != nil {
 		return nil, err
 	}

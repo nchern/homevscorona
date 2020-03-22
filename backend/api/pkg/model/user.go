@@ -2,12 +2,10 @@ package model
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type User struct {
-	Id uuid.UUID `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 
 	Email string `json:"email,omitempty"`
 
@@ -15,7 +13,7 @@ type User struct {
 }
 
 type Event struct {
-	Id        uuid.UUID `json:"id"`
+	ID        string    `json:"id"`
 	Timestamp time.Time `json:"timestamp"`
 
 	Location *Location `json:"location"`

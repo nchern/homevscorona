@@ -3,7 +3,6 @@ package store
 import (
 	"errors"
 
-	"github.com/google/uuid"
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
@@ -42,12 +41,12 @@ func (u *InMemUserStore) GetByEmail(email string) (*model.User, error) {
 	return nil, nil
 }
 
-func (u *InMemUserStore) GetById(id uuid.UUID) (*model.User, error) {
+func (u *InMemUserStore) GetById(id string) (*model.User, error) {
 	return nil, errors.New("GetById not implemented")
 }
 
-func (u *InMemUserStore) SaveEvent(userID uuid.UUID, event *model.Event) error {
-	key := userID.String()
+func (u *InMemUserStore) SaveEvent(userID string, event *model.Event) error {
+	key := userID
 	entry, found := u.userIDToEvents.Get(key)
 	if !found {
 		entry := &eventEntry{Events: []*model.Event{event}}
@@ -58,8 +57,8 @@ func (u *InMemUserStore) SaveEvent(userID uuid.UUID, event *model.Event) error {
 	return nil
 }
 
-func (u *InMemUserStore) GetEvents(userID uuid.UUID) ([]*model.Event, error) {
-	key := userID.String()
+func (u *InMemUserStore) GetEvents(userID string) ([]*model.Event, error) {
+	key := userID
 	entry, found := u.userIDToEvents.Get(key)
 	if !found {
 		return []*model.Event{}, nil
