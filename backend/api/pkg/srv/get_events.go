@@ -1,11 +1,31 @@
 package srv
 
 import (
+	"fmt"
 	"net/http"
+
+	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
 func getEvents(r *http.Request) (interface{}, error) {
-	return &eventsResponseMock{}, nil
+	token, err := authenticate(r.Header)
+	if err != nil {
+		return nil, err
+	}
+	user, err := users.GetByEmail(token.Email)
+	if user == nil {
+		return nil, fmt.Errorf("%s not found", token.Email)
+	}
+
+	return &eventsResponse{
+		UserName: user.Name,
+	}, nil
+}
+
+type eventsResponse struct {
+	UserName string `json:"user_name"`
+
+	Events []*model.Event `json:"events"`
 }
 
 type eventsResponseMock struct{}
