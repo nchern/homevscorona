@@ -1,5 +1,3 @@
-Example!
-
 Sign up endpoint
 
 ### Request:
@@ -7,9 +5,10 @@ Sign up endpoint
 ```http
 POST /signup
 
+Authorization: Bearer <token>
 Content-Type: application/json
 
-{ "username": "name" , "password": "..."}
+{ "type": "google" }
 ```
 
 ### Responses
