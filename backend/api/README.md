@@ -1,1 +1,3 @@
-Add all necessary project-realted info here
+Backedn API.
+
+Exposed HTTP JSON api.
