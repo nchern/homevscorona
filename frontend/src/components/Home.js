@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {Button, Container} from "react-bootstrap";
+import React, {Component, useState} from "react";
+import {Button, Container, Modal} from "react-bootstrap";
 import ConnectionDay from "./ConnectionDay";
 import "./Home.css";
 

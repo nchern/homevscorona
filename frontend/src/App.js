@@ -1,54 +1,62 @@
-import React from 'react';
-import {BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import {Nav, Navbar} from "react-bootstrap";
+import React, {Component} from 'react';
 import {Layout} from './components/Layout';
 import Login from './components/Login';
 import Home from "./components/Home";
 import CheckInLocation from "./components/CheckInLocation";
 import CheckInPerson from "./components/CheckInPerson";
-
+import {BrowserRouter as Router, Switch, Route, Redirect} from "react-router-dom";
 import './App.css';
+import Auth from "./components/Auth";
 
-function App() {
+function PrivateRoute({ children, ...rest }) {
   return (
-    <div className="App">
-    <Layout>
-    <Router>
-          <div>
-            <Navbar>
-                <Nav.Link href="/">Home</Nav.Link>
-                <Nav.Link href="/about">About</Nav.Link>
-                <Nav.Link href="/login">Login</Nav.Link>
-                <Nav.Link href="/checkin">CheckIn</Nav.Link>
-            </Navbar>
-            <br/>
-            <Switch>
-              <Route exact path="/about" component={About}/>
-              <Route exact path="/login" component={Login}/>
-              <Route exact path="/checkin" component={CheckIn}/>
-              <Route exact path="/checkin_person" component={CheckInLocation}/>
-              <Route exact path="/checkin_location" component={CheckInPerson}/>
-              <Route exact path="/" component={Home}/>
-              <Route path="*" component={NoMatch}/>
-            </Switch>
-          </div>
-        </Router>
-    </Layout>
-    </div>
+    <Route
+      {...rest}
+      render={({ location }) =>
+        Auth.isAuthenticated() ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location }
+            }}
+          />
+        )
+      }
+    />
   );
 }
 
-export default App;
+export default class App extends Component {
+    render() {
+    return (
+        <div className="App">
+            <Router>
+            <Layout>
+                <Switch>
+                  <Route path="/login">
+                  <Login />
+                  </Route>
+                  <PrivateRoute path="/checkin_person">
+                      <CheckInPerson/>
+                  </PrivateRoute>
+                  <PrivateRoute path="/checkin_location">
+                      <CheckInLocation/>
+                  </PrivateRoute>
+                  <PrivateRoute path="/">
+                      <Home/>
+                  </PrivateRoute>
+                  <Route path="*" component={NoMatch}/>
+                </Switch>
+            </Layout>
+            </Router>
+        </div>
+      );
+    }
 
-
-function About() {
-  return <h1>About</h1>;
 }
-
-function CheckIn() {
-    return <h1>Check-In</h1>
-}
-
 function NoMatch() {
-    return <h1>No Match</h1>
+    return <h2>Seite nicht gefunden.</h2>
+
 }

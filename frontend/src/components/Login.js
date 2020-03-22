@@ -1,58 +1,30 @@
-import React, {useState} from "react";
-import {Button, FormGroup, FormControl, FormLabel} from "react-bootstrap";
+import React, {Component} from "react";
+import GoogleLogin from "react-google-login";
+import {Redirect} from "react-router-dom";
 
-
-export default function Login(props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
-  }
-
-  function handleSubmit(event) {
-
-    console.log(event);
-    event.preventDefault();
-  }
-
+export default class Login extends Component {
+    state = {
+        redirect: false
+    };
+    responseGoogle = response => {
+        localStorage.setItem('ggToken', response.tokenObj.id_token);
+        this.setState({redirect:true});
+  };
+  render () {
+      const redirect = this.state.redirect;
+      if (redirect === true) {
+          return <Redirect to="/"/>
+      } else {
   return (
     <div className="Login">
-        <h1>Sign Up</h1>
-        <br/>
-      <form onSubmit={handleSubmit}>
-          <FormGroup controlId="username" bsSize="large">
-          <FormLabel>Username</FormLabel>
-          <FormControl
-            autoFocus
-            type="username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-          />
-        </FormGroup>
-        <FormGroup controlId="email" bsSize="large">
-          <FormLabel>Email</FormLabel>
-          <FormControl
-            autoFocus
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
-        </FormGroup>
-        <FormGroup controlId="password" bsSize="large">
-          <FormLabel>Password</FormLabel>
-          <FormControl
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            type="password"
-          />
-        </FormGroup>
-          <br/>
-        <Button block bsSize="large" disabled={!validateForm()} type="submit">
-          Login
-        </Button>
-      </form>
+        <h2>Bitte melde dich an!</h2>
+        <GoogleLogin
+                clientId="328361320618-g6bo1k25hqnnbngu6145u17lkaj383fd.apps.googleusercontent.com"
+                buttonText="Login"
+                onSuccess={this.responseGoogle}
+                onFailure={this.responseGoogle}
+                cookiePolicy={'single_host_origin'}
+            />
     </div>
-  );
-}
+        )
+  }}}
