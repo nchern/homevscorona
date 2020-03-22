@@ -7,13 +7,19 @@ import (
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
+type eventEntry struct {
+	Events []*model.Event
+}
+
 type InMemUserStore struct {
-	emailToUser StringUserPtrMap
+	emailToUser    StringUserPtrMap
+	userIDToEvents StringEventEntryPtrMap
 }
 
 func NewInMemUserStore() *InMemUserStore {
 	return &InMemUserStore{
-		emailToUser: NewStringUserPtrMapSyncronized(),
+		emailToUser:    NewStringUserPtrMapSyncronized(),
+		userIDToEvents: NewStringEventEntryPtrMapSyncronized(),
 	}
 
 }
@@ -38,4 +44,25 @@ func (u *InMemUserStore) GetByEmail(email string) (*model.User, error) {
 
 func (u *InMemUserStore) GetById(id uuid.UUID) (*model.User, error) {
 	return nil, errors.New("GetById not implemented")
+}
+
+func (u *InMemUserStore) SaveEvent(userID uuid.UUID, event *model.Event) error {
+	key := userID.String()
+	entry, found := u.userIDToEvents.Get(key)
+	if !found {
+		entry := &eventEntry{Events: []*model.Event{event}}
+		u.userIDToEvents.Set(key, entry)
+		return nil
+	}
+	entry.Events = append(entry.Events, event)
+	return nil
+}
+
+func (u *InMemUserStore) GetEvents(userID uuid.UUID) ([]*model.Event, error) {
+	key := userID.String()
+	entry, found := u.userIDToEvents.Get(key)
+	if !found {
+		return []*model.Event{}, nil
+	}
+	return entry.Events, nil
 }

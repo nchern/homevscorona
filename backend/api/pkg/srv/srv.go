@@ -19,6 +19,8 @@ type UserStore interface {
 	Create(email string, u *model.User) error
 	GetByEmail(email string) (*model.User, error)
 	GetById(id uuid.UUID) (*model.User, error)
+	SaveEvent(userID uuid.UUID, event *model.Event) error
+	GetEvents(userID uuid.UUID) ([]*model.Event, error)
 }
 
 // Start runs the api server
@@ -40,5 +42,5 @@ func setRoutes() {
 	http.HandleFunc("/status", handle(status))
 	http.HandleFunc("/api/get_events", handle(getEvents))
 	http.HandleFunc("/api/signup", handle(signup))
-	//	http.HandleFunc("/api/new_event", handle(getEvents))
+	http.HandleFunc("/api/new_event", handle(newEvent))
 }

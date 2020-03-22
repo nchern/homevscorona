@@ -1,6 +1,7 @@
 package srv
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -12,12 +13,21 @@ func signup(r *http.Request) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	var req signupRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return nil, err
+	}
 
-	user := &model.User{Id: uuid.New(), Email: token.Email, Name: "John Doe"}
+	user := &model.User{Id: uuid.New(), Email: token.Email, Name: req.Name}
 	err = users.Create(token.Email, user)
 	if err != nil {
 		return nil, err
 	}
 
 	return okResponse, nil
+}
+
+type signupRequest struct {
+	Name     string `json:"name"`
+	Provider string `json:"provider"`
 }

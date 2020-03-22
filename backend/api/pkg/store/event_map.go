@@ -3,46 +3,42 @@
 
 package store
 
-import (
-	"sync"
+import "sync"
 
-	"github.com/nchern/homevscorona/backend/api/pkg/model"
-)
+type StringEventEntryPtrMapVisitor func(string, *eventEntry) bool
 
-type StringEventPtrMapVisitor func(string, *model.Event) bool
-
-type StringEventPtrMap interface {
-	Each(visitor StringEventPtrMapVisitor)
-	Get(key string) (v *model.Event, found bool)
-	Set(key string, val *model.Event)
-	Update(src map[string]*model.Event) StringEventPtrMap
+type StringEventEntryPtrMap interface {
+	Each(visitor StringEventEntryPtrMapVisitor)
+	Get(key string) (v *eventEntry, found bool)
+	Set(key string, val *eventEntry)
+	Update(src map[string]*eventEntry) StringEventEntryPtrMap
 	Remove(key string) bool
-	Clone() StringEventPtrMap
+	Clone() StringEventEntryPtrMap
 }
 
-type baseStringEventPtrMap struct {
-	_map map[string]*model.Event
+type baseStringEventEntryPtrMap struct {
+	_map map[string]*eventEntry
 }
 
-func NewStringEventPtrMap() StringEventPtrMap {
-	res := &baseStringEventPtrMap{
-		_map: map[string]*model.Event{},
+func NewStringEventEntryPtrMap() StringEventEntryPtrMap {
+	res := &baseStringEventEntryPtrMap{
+		_map: map[string]*eventEntry{},
 	}
 	return res
 }
 
-func NewStringEventPtrMapSyncronized() StringEventPtrMap {
-	return &syncStringEventPtrMap{
-		inner: NewStringEventPtrMap(),
+func NewStringEventEntryPtrMapSyncronized() StringEventEntryPtrMap {
+	return &syncStringEventEntryPtrMap{
+		inner: NewStringEventEntryPtrMap(),
 	}
 }
 
-func (m *baseStringEventPtrMap) Get(key string) (v *model.Event, found bool) {
+func (m *baseStringEventEntryPtrMap) Get(key string) (v *eventEntry, found bool) {
 	v, found = m._map[key]
 	return
 }
 
-func (m *baseStringEventPtrMap) Each(visitor StringEventPtrMapVisitor) {
+func (m *baseStringEventEntryPtrMap) Each(visitor StringEventEntryPtrMapVisitor) {
 	for k, v := range m._map {
 		if !visitor(k, v) {
 			return
@@ -50,26 +46,26 @@ func (m *baseStringEventPtrMap) Each(visitor StringEventPtrMapVisitor) {
 	}
 }
 
-func (m *baseStringEventPtrMap) Set(key string, val *model.Event) {
+func (m *baseStringEventEntryPtrMap) Set(key string, val *eventEntry) {
 	m._map[key] = val
 }
 
-func (m *baseStringEventPtrMap) Update(src map[string]*model.Event) StringEventPtrMap {
+func (m *baseStringEventEntryPtrMap) Update(src map[string]*eventEntry) StringEventEntryPtrMap {
 	for k, v := range src {
 		m._map[k] = v
 	}
 	return m
 }
 
-func (m *baseStringEventPtrMap) Remove(key string) bool {
+func (m *baseStringEventEntryPtrMap) Remove(key string) bool {
 	_, found := m._map[key]
 	delete(m._map, key)
 
 	return found
 }
 
-func (m *baseStringEventPtrMap) Clone() StringEventPtrMap {
-	res := NewStringEventPtrMap()
+func (m *baseStringEventEntryPtrMap) Clone() StringEventEntryPtrMap {
+	res := NewStringEventEntryPtrMap()
 	for k, v := range m._map {
 		res.Set(k, v)
 	}
@@ -77,32 +73,32 @@ func (m *baseStringEventPtrMap) Clone() StringEventPtrMap {
 	return res
 }
 
-type syncStringEventPtrMap struct {
-	inner StringEventPtrMap
+type syncStringEventEntryPtrMap struct {
+	inner StringEventEntryPtrMap
 
 	mutex sync.RWMutex
 }
 
-func (m *syncStringEventPtrMap) Each(visitor StringEventPtrMapVisitor) {
+func (m *syncStringEventEntryPtrMap) Each(visitor StringEventEntryPtrMapVisitor) {
 	m.mutex.RLock()
 	m.inner.Each(visitor)
 	m.mutex.RUnlock()
 }
 
-func (m *syncStringEventPtrMap) Get(key string) (v *model.Event, found bool) {
+func (m *syncStringEventEntryPtrMap) Get(key string) (v *eventEntry, found bool) {
 	m.mutex.RLock()
 	v, found = m.inner.Get(key)
 	m.mutex.RUnlock()
 	return
 }
 
-func (m *syncStringEventPtrMap) Set(key string, val *model.Event) {
+func (m *syncStringEventEntryPtrMap) Set(key string, val *eventEntry) {
 	m.mutex.Lock()
 	m.inner.Set(key, val)
 	m.mutex.Unlock()
 }
 
-func (m *syncStringEventPtrMap) Update(src map[string]*model.Event) StringEventPtrMap {
+func (m *syncStringEventEntryPtrMap) Update(src map[string]*eventEntry) StringEventEntryPtrMap {
 	m.mutex.Lock()
 	m.inner.Update(src)
 	m.mutex.Unlock()
@@ -110,7 +106,7 @@ func (m *syncStringEventPtrMap) Update(src map[string]*model.Event) StringEventP
 	return m
 }
 
-func (m *syncStringEventPtrMap) Remove(key string) bool {
+func (m *syncStringEventEntryPtrMap) Remove(key string) bool {
 	m.mutex.Lock()
 	found := m.inner.Remove(key)
 	m.mutex.Unlock()
@@ -118,7 +114,7 @@ func (m *syncStringEventPtrMap) Remove(key string) bool {
 	return found
 }
 
-func (m *syncStringEventPtrMap) Clone() StringEventPtrMap {
+func (m *syncStringEventEntryPtrMap) Clone() StringEventEntryPtrMap {
 	m.mutex.RLock()
 	r := m.inner.Clone()
 	m.mutex.RUnlock()

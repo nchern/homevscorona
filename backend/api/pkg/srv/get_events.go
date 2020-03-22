@@ -13,12 +13,19 @@ func getEvents(r *http.Request) (interface{}, error) {
 		return nil, err
 	}
 	user, err := users.GetByEmail(token.Email)
+	if err != nil {
+		return nil, err
+	}
 	if user == nil {
 		return nil, fmt.Errorf("%s not found", token.Email)
 	}
-
+	events, err := users.GetEvents(user.Id)
+	if err != nil {
+		return nil, err
+	}
 	return &eventsResponse{
 		UserName: user.Name,
+		Events:   events,
 	}, nil
 }
 

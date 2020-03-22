@@ -44,6 +44,11 @@ func authenticate(headers http.Header) (*AuthToken, error) {
 	if token == "" {
 		return nil, errAuthFailed
 	}
+	if token == "123-test-1" {
+		return &AuthToken{
+			Email: "test-1@localhost.io",
+		}, nil
+	}
 	return &AuthToken{
 		Email: "test@localhost.io",
 	}, nil
