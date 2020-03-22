@@ -16,7 +16,8 @@ Content-Type: application/json
 ```
 
 #### Details for users
-```{
+```
+{
     "users": [
       {
         "user_id": "user-id",
