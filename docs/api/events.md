@@ -6,7 +6,7 @@ Endpoint for receiving all recent Events (maybe last 14days?) of a User
 POST /get_events
 Authorization: Bearer <token>
 
-{"start_date": <datetime>, "end_date": <datetime>}  # Both fields are optional
+{"start_date": 12345678, "end_date": 12345678}  # Both fields are optional
 
 HTTP 200 OK
 
@@ -17,7 +17,7 @@ Content-Type: application/json
   "events": [
     {
       "type": "location",
-      "time": "datetime",
+      "time": 12345678,
       "details": {
         "location_id": "location-id-1",
         "name": "Rewe",
@@ -26,16 +26,16 @@ Content-Type: application/json
     },
     {
       "type": "person",
-      "time": "datetime",
+      "time": 12345678,
       "details": {
-        "companions_users": [
+        "users": [
           {
             "user_id": "user-id",
-            "user_name": "User regitered name"
-          }
-        ],
-        "companions_non_users": [
+            "user_name": "User regitered name",
+            "name": "..."
+          }, 
           {
+            // no "user_id" for unregistered user
             "name": "Sarah ."
           }
         ]
