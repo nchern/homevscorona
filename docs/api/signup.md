@@ -8,7 +8,7 @@ POST /signup
 Authorization: Bearer <token>
 Content-Type: application/json
 
-{ "type": "google" }
+{ "provider": "google", "name": "John Doe" }
 ```
 
 ### Responses
