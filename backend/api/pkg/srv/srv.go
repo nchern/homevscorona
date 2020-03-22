@@ -24,5 +24,5 @@ func Stop() {
 
 func setRoutes() {
 	http.HandleFunc("/status", handle(status))
-	http.HandleFunc("/get_events", handle(getEvents))
+	http.HandleFunc("/api/get_events", handle(getEvents))
 }
