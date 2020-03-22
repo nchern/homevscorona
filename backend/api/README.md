@@ -1,6 +1,6 @@
 # Backedn API
 
-Exposed HTTP JSON api.
+Exposes HTTP JSON api.
 
 ## Build
 
