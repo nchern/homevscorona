@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 )
 
 const (
@@ -27,31 +26,6 @@ type errorResponse struct {
 	Status string `json:"status"`
 	Title  string `json:"title"`
 	Detail string `json:"detail"`
-}
-
-type AuthToken struct {
-	Email string `json:"email"`
-}
-
-func authenticate(headers http.Header) (*AuthToken, error) {
-	val := headers.Get(headerAuthorization)
-	// check bearer
-	tokens := strings.Split(val, " ")
-	if len(tokens) != 2 {
-		return nil, errAuthFailed
-	}
-	token := strings.TrimSpace(tokens[1])
-	if token == "" {
-		return nil, errAuthFailed
-	}
-	if token == "123-test-1" {
-		return &AuthToken{
-			Email: "test-1@localhost.io",
-		}, nil
-	}
-	return &AuthToken{
-		Email: "test@localhost.io",
-	}, nil
 }
 
 type handler func(*http.Request) (interface{}, error)
