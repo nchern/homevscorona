@@ -2,7 +2,6 @@ package srv
 
 import (
 	"encoding/json"
-	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
@@ -13,18 +12,16 @@ type signupRequest struct {
 	Provider string `json:"provider"`
 }
 
-func signup(r *http.Request) (interface{}, error) {
-	token, err := authenticate(r.Header)
-	if err != nil {
-		return nil, err
-	}
+func signup(ctx *Context) (interface{}, error) {
 	var req signupRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(ctx.Request.Body).Decode(&req); err != nil {
 		return nil, err
 	}
 
-	user := &model.User{ID: uuid.New().String(), Email: token.Email, Name: req.Name}
-	err = users.Create(token.Email, user)
+	email := ctx.Token.Email
+	user := &model.User{ID: uuid.New().String(), Email: email, Name: req.Name}
+
+	err := users.Create(email, user)
 	if err != nil {
 		return nil, err
 	}

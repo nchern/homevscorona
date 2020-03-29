@@ -40,7 +40,7 @@ func Stop() {
 
 func setRoutes() {
 	http.HandleFunc("/api/status", handle(status))
-	http.HandleFunc("/api/signup", handle(signup))
-	http.HandleFunc("/api/new_event", handle(newEvent))
-	http.HandleFunc("/api/get_events", handle(getEvents))
+	http.HandleFunc("/api/signup", handle(authenticated(signup)))
+	http.HandleFunc("/api/new_event", handle(authenticated(newEvent)))
+	http.HandleFunc("/api/get_events", handle(authenticated(getEvents)))
 }

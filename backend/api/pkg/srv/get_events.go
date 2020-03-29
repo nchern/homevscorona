@@ -2,34 +2,33 @@ package srv
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
-func getEvents(r *http.Request) (interface{}, error) {
-	token, err := authenticate(r.Header)
-	if err != nil {
-		return nil, err
-	}
-	user, err := users.GetByEmail(token.Email)
+func getEvents(ctx *Context) (interface{}, error) {
+	user, err := users.GetByEmail(ctx.Token.Email)
 	if err != nil {
 		return nil, err
 	}
 	if user == nil {
-		return nil, fmt.Errorf("%s not found", token.Email)
+		return nil, fmt.Errorf("%s not found", ctx.Token.Email)
 	}
 	events, err := users.GetEvents(user.ID)
 	if err != nil {
 		return nil, err
 	}
 	return &eventsResponse{
-		UserName: user.Name,
+		responseBase: okResponse,
+
 		Events:   events,
+		UserName: user.Name,
 	}, nil
 }
 
 type eventsResponse struct {
+	responseBase
+
 	UserName string `json:"user_name"`
 
 	Events []*model.Event `json:"events"`

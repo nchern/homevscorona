@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,14 +25,9 @@ type eventDetails struct {
 	Users []*model.User `json:"users"`
 }
 
-func newEvent(r *http.Request) (interface{}, error) {
-	token, err := authenticate(r.Header)
-	if err != nil {
-		return nil, err
-	}
-
+func newEvent(ctx *Context) (interface{}, error) {
 	var req newEventRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(ctx.Request.Body).Decode(&req); err != nil {
 		return nil, err
 	}
 	if req.Type != eventPerson {
@@ -46,12 +40,12 @@ func newEvent(r *http.Request) (interface{}, error) {
 	}
 	// TODO: add various validations
 
-	user, err := users.GetByEmail(token.Email)
+	user, err := users.GetByEmail(ctx.Token.Email)
 	if err != nil {
 		return nil, err
 	}
 	if user == nil {
-		return nil, fmt.Errorf("%s not found", token.Email)
+		return nil, fmt.Errorf("%s not found", ctx.Token.Email)
 	}
 
 	event := &model.Event{ID: uuid.New().String(), Timestamp: time.Unix(req.Time, 0)}

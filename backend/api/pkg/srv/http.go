@@ -6,8 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-
-	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
 const (
@@ -30,9 +28,9 @@ type errorResponse struct {
 	Detail string `json:"detail"`
 }
 
-type RequestContext struct {
-	AuthenticatedUser *model.User
-	Request           *http.Request
+type Context struct {
+	Token   *AuthToken
+	Request *http.Request
 }
 
 type handler func(*http.Request) (interface{}, error)
@@ -56,6 +54,22 @@ func handle(fn handler) func(http.ResponseWriter, *http.Request) {
 		if err := json.NewEncoder(w).Encode(resp); err != nil {
 			logError(r, err)
 		}
+	}
+}
+
+type authenticatedHandler func(ctx *Context) (interface{}, error)
+
+func authenticated(fn authenticatedHandler) handler {
+	return func(r *http.Request) (interface{}, error) {
+		token, err := authenticate(r.Header)
+		if err != nil {
+			return nil, err
+		}
+		ctx := &Context{
+			Request: r,
+			Token:   token,
+		}
+		return fn(ctx)
 	}
 }
 
