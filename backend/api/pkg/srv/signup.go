@@ -18,7 +18,7 @@ func signup(ctx *Context) (interface{}, error) {
 		return nil, err
 	}
 
-	email := ctx.Token.Email
+	email := ctx.Token.GetEmail()
 	user := &model.User{ID: uuid.New().String(), Email: email, Name: req.Name}
 
 	err := users.Create(email, user)

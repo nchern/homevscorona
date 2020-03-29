@@ -16,11 +16,11 @@ var (
 	errAuthFailed = errors.New("auth failed")
 )
 
-type AuthToken struct {
-	Email string `json:"email"`
+type Token interface {
+	GetEmail() string
 }
 
-func authenticate(headers http.Header) (*AuthToken, error) {
+func authenticate(headers http.Header) (Token, error) {
 	val := headers.Get(headerAuthorization)
 	// check bearer
 	tokens := strings.Split(val, " ")
@@ -32,12 +32,12 @@ func authenticate(headers http.Header) (*AuthToken, error) {
 		return nil, errAuthFailed
 	}
 	if token == "123-test-1" {
-		return &AuthToken{
+		return &googleToken{
 			Email: "test-1@localhost.io",
 		}, nil
 	}
 	if token == "123-test-2" {
-		return &AuthToken{
+		return &googleToken{
 			Email: "test@localhost.io",
 		}, nil
 	}
@@ -63,9 +63,7 @@ func authenticate(headers http.Header) (*AuthToken, error) {
 	if gtok.Email == "" {
 		return nil, fmt.Errorf("google.oauth: empty email")
 	}
-	return &AuthToken{
-		Email: gtok.Email,
-	}, nil
+	return &gtok, nil
 
 }
 
@@ -88,4 +86,8 @@ type googleToken struct {
 	Alg           string `json:"alg"`
 	Kid           string `json:"kid"`
 	Typ           string `json:"typ"`
+}
+
+func (t *googleToken) GetEmail() string {
+	return t.Email
 }

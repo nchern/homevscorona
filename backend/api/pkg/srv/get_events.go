@@ -8,7 +8,7 @@ import (
 
 func getEvents(ctx *Context) (interface{}, error) {
 	if ctx.AuthenticatedUser == nil {
-		return nil, fmt.Errorf("not found: %s", ctx.Token.Email)
+		return nil, fmt.Errorf("not found: %s", ctx.Token.GetEmail())
 	}
 
 	user := ctx.AuthenticatedUser

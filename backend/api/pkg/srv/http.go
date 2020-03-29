@@ -31,7 +31,7 @@ type errorResponse struct {
 }
 
 type Context struct {
-	Token             *AuthToken
+	Token             Token
 	AuthenticatedUser *model.User
 	Request           *http.Request
 }
@@ -69,7 +69,7 @@ func authenticated(fn authenticatedHandler) handler {
 			return nil, err
 		}
 
-		user, err := users.GetByEmail(token.Email)
+		user, err := users.GetByEmail(token.GetEmail())
 		if err != nil {
 			return nil, err
 		}
