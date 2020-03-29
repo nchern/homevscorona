@@ -8,6 +8,11 @@ import (
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
+type signupRequest struct {
+	Name     string `json:"name"`
+	Provider string `json:"provider"`
+}
+
 func signup(r *http.Request) (interface{}, error) {
 	token, err := authenticate(r.Header)
 	if err != nil {
@@ -25,9 +30,4 @@ func signup(r *http.Request) (interface{}, error) {
 	}
 
 	return okResponse, nil
-}
-
-type signupRequest struct {
-	Name     string `json:"name"`
-	Provider string `json:"provider"`
 }

@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
 const (
@@ -28,6 +30,11 @@ type errorResponse struct {
 	Detail string `json:"detail"`
 }
 
+type RequestContext struct {
+	AuthenticatedUser *model.User
+	Request           *http.Request
+}
+
 type handler func(*http.Request) (interface{}, error)
 
 func handle(fn handler) func(http.ResponseWriter, *http.Request) {
@@ -42,24 +49,32 @@ func handle(fn handler) func(http.ResponseWriter, *http.Request) {
 		resp, err := fn(r)
 
 		if err != nil {
-			log.Printf("ERROR %s %s", r.URL, err)
-
-			status = http.StatusInternalServerError
-
-			if err == errAuthFailed {
-				status = http.StatusUnauthorized
-			}
-			if err == io.EOF {
-				status = http.StatusBadRequest
-			}
-
-			resp = errorResponse{Status: fmt.Sprintf("%d", status), Detail: err.Error()}
+			status, resp = handleError(r, err)
 		}
 
 		w.WriteHeader(status)
-
 		if err := json.NewEncoder(w).Encode(resp); err != nil {
-			log.Printf("ERROR %s %s", r.URL, err)
+			logError(r, err)
 		}
 	}
+}
+
+func handleError(r *http.Request, err error) (status int, resp interface{}) {
+	logError(r, err)
+
+	status = http.StatusInternalServerError
+
+	if err == errAuthFailed {
+		status = http.StatusUnauthorized
+	}
+	if err == io.EOF {
+		status = http.StatusBadRequest
+	}
+
+	resp = errorResponse{Status: fmt.Sprintf("%d", status), Detail: err.Error()}
+	return
+}
+
+func logError(r *http.Request, err error) {
+	log.Printf("ERROR %s %s", r.URL, err)
 }
