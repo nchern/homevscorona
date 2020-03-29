@@ -7,13 +7,12 @@ import (
 )
 
 func getEvents(ctx *Context) (interface{}, error) {
-	user, err := users.GetByEmail(ctx.Token.Email)
-	if err != nil {
-		return nil, err
+	if ctx.AuthenticatedUser == nil {
+		return nil, fmt.Errorf("not found: %s", ctx.Token.Email)
 	}
-	if user == nil {
-		return nil, fmt.Errorf("%s not found", ctx.Token.Email)
-	}
+
+	user := ctx.AuthenticatedUser
+
 	events, err := users.GetEvents(user.ID)
 	if err != nil {
 		return nil, err

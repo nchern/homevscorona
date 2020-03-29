@@ -26,6 +26,10 @@ type eventDetails struct {
 }
 
 func newEvent(ctx *Context) (interface{}, error) {
+	if ctx.AuthenticatedUser == nil {
+		return nil, fmt.Errorf("not found: %s", ctx.Token.Email)
+	}
+
 	var req newEventRequest
 	if err := json.NewDecoder(ctx.Request.Body).Decode(&req); err != nil {
 		return nil, err
@@ -40,19 +44,11 @@ func newEvent(ctx *Context) (interface{}, error) {
 	}
 	// TODO: add various validations
 
-	user, err := users.GetByEmail(ctx.Token.Email)
-	if err != nil {
-		return nil, err
-	}
-	if user == nil {
-		return nil, fmt.Errorf("%s not found", ctx.Token.Email)
-	}
-
 	event := &model.Event{ID: uuid.New().String(), Timestamp: time.Unix(req.Time, 0)}
 	for _, u := range req.Details.Users {
 		event.Users = append(event.Users, u)
 	}
-	if err := users.SaveEvent(user.ID, event); err != nil {
+	if err := users.SaveEvent(ctx.AuthenticatedUser.ID, event); err != nil {
 		return nil, err
 	}
 

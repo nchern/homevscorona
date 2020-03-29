@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
 const (
@@ -29,8 +31,9 @@ type errorResponse struct {
 }
 
 type Context struct {
-	Token   *AuthToken
-	Request *http.Request
+	Token             *AuthToken
+	AuthenticatedUser *model.User
+	Request           *http.Request
 }
 
 type handler func(*http.Request) (interface{}, error)
@@ -65,9 +68,16 @@ func authenticated(fn authenticatedHandler) handler {
 		if err != nil {
 			return nil, err
 		}
+
+		user, err := users.GetByEmail(token.Email)
+		if err != nil {
+			return nil, err
+		}
+
 		ctx := &Context{
-			Request: r,
-			Token:   token,
+			Request:           r,
+			AuthenticatedUser: user,
+			Token:             token,
 		}
 		return fn(ctx)
 	}
