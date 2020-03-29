@@ -14,10 +14,12 @@ var (
 	users UserStore = store.NewInMemUserStore()
 )
 
+type m map[string]interface{}
+
 type UserStore interface {
 	Create(email string, u *model.User) error
 	GetByEmail(email string) (*model.User, error)
-	GetById(id string) (*model.User, error)
+	GetByID(id string) (*model.User, error)
 	SaveEvent(userID string, event *model.Event) error
 	GetEvents(userID string) ([]*model.Event, error)
 }
@@ -29,7 +31,6 @@ func Start(name string) {
 	setRoutes()
 
 	log.Fatal(http.ListenAndServe(listenAddr, nil))
-
 }
 
 // Stop performs all necessary operations for graceful service tear down.
@@ -38,8 +39,8 @@ func Stop() {
 }
 
 func setRoutes() {
-	http.HandleFunc("/status", handle(status))
-	http.HandleFunc("/api/get_events", handle(getEvents))
+	http.HandleFunc("/api/status", handle(status))
 	http.HandleFunc("/api/signup", handle(signup))
 	http.HandleFunc("/api/new_event", handle(newEvent))
+	http.HandleFunc("/api/get_events", handle(getEvents))
 }

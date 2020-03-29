@@ -10,8 +10,8 @@ Content-Type: application/json
 
 {
   "type": "location/person",
-  "date": 12345678,
-  "details": { /*  The content of "details" depends on the type of event */ }
+  "time": 12345678,
+  "details": { }
 }
 ```
 

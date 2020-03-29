@@ -41,7 +41,7 @@ func (u *InMemUserStore) GetByEmail(email string) (*model.User, error) {
 	return nil, nil
 }
 
-func (u *InMemUserStore) GetById(id string) (*model.User, error) {
+func (u *InMemUserStore) GetByID(id string) (*model.User, error) {
 	return nil, errors.New("GetById not implemented")
 }
 

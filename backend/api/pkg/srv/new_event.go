@@ -11,14 +11,19 @@ import (
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
+const (
+	eventPerson   = "person"
+	eventLocation = "location"
+)
+
 type newEventRequest struct {
-	Type    string      `json:"type"`
-	Date    int64       `json:"date"`
-	Details *eventUsers `json:"details"`
+	Type    string       `json:"type"`
+	Time    int64        `json:"time"`
+	Details eventDetails `json:"details"`
 }
 
-type eventUsers struct {
-	Users []*model.User
+type eventDetails struct {
+	Users []*model.User `json:"users"`
 }
 
 func newEvent(r *http.Request) (interface{}, error) {
@@ -31,7 +36,11 @@ func newEvent(r *http.Request) (interface{}, error) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
-	if req.Details == nil {
+	if req.Type != eventPerson {
+		// TODO: proper error, should be 400
+		return nil, errors.New("unknown event type: " + req.Type)
+	}
+	if len(req.Details.Users) == 0 {
 		// TODO: proper error, should be 400
 		return nil, errors.New("empty details")
 	}
@@ -45,7 +54,7 @@ func newEvent(r *http.Request) (interface{}, error) {
 		return nil, fmt.Errorf("%s not found", token.Email)
 	}
 
-	event := &model.Event{ID: uuid.New().String(), Timestamp: time.Unix(req.Date, 0)}
+	event := &model.Event{ID: uuid.New().String(), Timestamp: time.Unix(req.Time, 0)}
 	for _, u := range req.Details.Users {
 		event.Users = append(event.Users, u)
 	}

@@ -2,6 +2,7 @@ package srv
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -9,6 +10,10 @@ import (
 
 const (
 	googleOAUTHUrl = "https://oauth2.googleapis.com/tokeninfo?id_token="
+)
+
+var (
+	errAuthFailed = errors.New("auth failed")
 )
 
 type AuthToken struct {
@@ -41,11 +46,15 @@ func authenticate(headers http.Header) (*AuthToken, error) {
 	if err != nil {
 		return nil, err
 	}
-	if resp.StatusCode > 200 {
-		// TODO: proper error reporting and handling
-		return nil, fmt.Errorf("google.oauth: %d", resp.StatusCode)
-	}
 	defer resp.Body.Close()
+	if resp.StatusCode > 200 {
+		errBody := m{}
+		if err := json.NewDecoder(resp.Body).Decode(&errBody); err != nil {
+			return nil, err
+		}
+		// TODO: proper error reporting and handling
+		return nil, fmt.Errorf("google.oauth: %d [%+v]", resp.StatusCode, errBody)
+	}
 	var gtok googleToken
 	if err := json.NewDecoder(resp.Body).Decode(&gtok); err != nil {
 		return nil, err

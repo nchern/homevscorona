@@ -2,8 +2,8 @@ package srv
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 )
@@ -13,17 +13,17 @@ const (
 )
 
 var (
-	errAuthFailed = errors.New("auth failed")
-
-	okResponse = &baseResponse{Status: "ok"}
+	okResponse = responseBase{Status: "200"}
 )
 
-type baseResponse struct {
+type responseBase struct {
 	Status string `json:"status"`
 }
 
 type errorResponse struct {
 	Status string `json:"status"`
+
+	Code   string `json:"code,omitempty"`
 	Title  string `json:"title"`
 	Detail string `json:"detail"`
 }
@@ -42,18 +42,24 @@ func handle(fn handler) func(http.ResponseWriter, *http.Request) {
 		resp, err := fn(r)
 
 		if err != nil {
-			status = http.StatusInternalServerError
 			log.Printf("ERROR %s %s", r.URL, err)
+
+			status = http.StatusInternalServerError
 
 			if err == errAuthFailed {
 				status = http.StatusUnauthorized
 			}
+			if err == io.EOF {
+				status = http.StatusBadRequest
+			}
 
 			resp = errorResponse{Status: fmt.Sprintf("%d", status), Detail: err.Error()}
 		}
+
 		w.WriteHeader(status)
+
 		if err := json.NewEncoder(w).Encode(resp); err != nil {
-			log.Printf("%s %s", r.URL, err)
+			log.Printf("ERROR %s %s", r.URL, err)
 		}
 	}
 }

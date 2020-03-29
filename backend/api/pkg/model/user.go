@@ -16,7 +16,7 @@ type Event struct {
 	ID        string    `json:"id"`
 	Timestamp time.Time `json:"timestamp"`
 
-	Location *Location `json:"location"`
+	Location *Location `json:"location,omitempty"`
 
 	Users []*User `json:"users"`
 }
