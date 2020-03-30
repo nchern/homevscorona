@@ -1,14 +1,12 @@
 package srv
 
 import (
-	"fmt"
-
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
 func getEvents(ctx *Context) (interface{}, error) {
 	if ctx.AuthenticatedUser == nil {
-		return nil, fmt.Errorf("not found: %s", ctx.Token.GetEmail())
+		return nil, errUnknownUserToken(ctx.Token)
 	}
 
 	user := ctx.AuthenticatedUser

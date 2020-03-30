@@ -2,6 +2,7 @@ package srv
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -15,6 +16,9 @@ const (
 )
 
 var (
+	errNotFound         = errors.New("not found")
+	errValidationFailed = errors.New("invalid params")
+
 	okResponse = responseBase{Status: "200"}
 )
 
@@ -88,10 +92,16 @@ func handleError(r *http.Request, err error) (status int, resp interface{}) {
 
 	status = http.StatusInternalServerError
 
-	if err == errAuthFailed {
+	if err == io.EOF {
+		// this case handles failed json request parsing when body is empty
+		// TODO: make it more specific
+		status = http.StatusBadRequest
+	}
+	if errors.Is(err, errAuthFailed) {
 		status = http.StatusUnauthorized
 	}
-	if err == io.EOF {
+	if errors.Is(err, errValidationFailed) ||
+		errors.Is(err, errNotFound) {
 		status = http.StatusBadRequest
 	}
 
