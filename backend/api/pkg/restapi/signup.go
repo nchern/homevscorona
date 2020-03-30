@@ -1,8 +1,6 @@
 package restapi
 
 import (
-	"encoding/json"
-
 	"github.com/google/uuid"
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
@@ -14,7 +12,7 @@ type signupRequest struct {
 
 func Signup(ctx *Context) (interface{}, error) {
 	var req signupRequest
-	if err := json.NewDecoder(ctx.Request.Body).Decode(&req); err != nil {
+	if err := ctx.ParseJSONBody(&req); err != nil {
 		return nil, err
 	}
 

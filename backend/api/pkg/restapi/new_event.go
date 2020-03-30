@@ -1,7 +1,6 @@
 package restapi
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -30,7 +29,7 @@ func NewEvent(ctx *Context) (interface{}, error) {
 	}
 
 	var req newEventRequest
-	if err := json.NewDecoder(ctx.Request.Body).Decode(&req); err != nil {
+	if err := ctx.ParseJSONBody(&req); err != nil {
 		return nil, err
 	}
 

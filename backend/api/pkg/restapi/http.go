@@ -40,6 +40,13 @@ type Context struct {
 	Request           *http.Request
 }
 
+func (c *Context) ParseJSONBody(req interface{}) error {
+	if err := json.NewDecoder(c.Request.Body).Decode(req); err != nil {
+		return fmt.Errorf("%w: json: %s", errValidationFailed, err)
+	}
+	return nil
+}
+
 type Handler func(*http.Request) (interface{}, error)
 
 func Handle(fn Handler) func(http.ResponseWriter, *http.Request) {
@@ -95,6 +102,7 @@ func handleError(r *http.Request, err error) (status int, resp interface{}) {
 	if err == io.EOF {
 		// this case handles failed json request parsing when body is empty
 		// TODO: make it more specific
+		panic("")
 		status = http.StatusBadRequest
 	}
 	if errors.Is(err, errAuthFailed) {
