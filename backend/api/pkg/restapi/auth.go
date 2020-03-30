@@ -1,4 +1,4 @@
-package srv
+package restapi
 
 import (
 	"encoding/json"

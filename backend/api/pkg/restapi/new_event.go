@@ -1,4 +1,4 @@
-package srv
+package restapi
 
 import (
 	"encoding/json"
@@ -24,7 +24,7 @@ type eventDetails struct {
 	Users []*model.User `json:"users"`
 }
 
-func newEvent(ctx *Context) (interface{}, error) {
+func NewEvent(ctx *Context) (interface{}, error) {
 	if ctx.AuthenticatedUser == nil {
 		return nil, errUnknownUserToken(ctx.Token)
 	}

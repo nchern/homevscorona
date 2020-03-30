@@ -1,4 +1,4 @@
-package srv
+package restapi
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ type signupRequest struct {
 	Provider string `json:"provider"`
 }
 
-func signup(ctx *Context) (interface{}, error) {
+func Signup(ctx *Context) (interface{}, error) {
 	var req signupRequest
 	if err := json.NewDecoder(ctx.Request.Body).Decode(&req); err != nil {
 		return nil, err

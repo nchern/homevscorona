@@ -1,4 +1,4 @@
-package srv
+package restapi
 
 import (
 	"encoding/json"
@@ -40,9 +40,9 @@ type Context struct {
 	Request           *http.Request
 }
 
-type handler func(*http.Request) (interface{}, error)
+type Handler func(*http.Request) (interface{}, error)
 
-func handle(fn handler) func(http.ResponseWriter, *http.Request) {
+func Handle(fn Handler) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		status := http.StatusOK
 
@@ -64,9 +64,9 @@ func handle(fn handler) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-type authenticatedHandler func(ctx *Context) (interface{}, error)
+type AuthenticatedHandler func(ctx *Context) (interface{}, error)
 
-func authenticated(fn authenticatedHandler) handler {
+func Authenticated(fn AuthenticatedHandler) Handler {
 	return func(r *http.Request) (interface{}, error) {
 		token, err := authenticate(r.Header)
 		if err != nil {

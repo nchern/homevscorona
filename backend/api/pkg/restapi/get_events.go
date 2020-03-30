@@ -1,10 +1,10 @@
-package srv
+package restapi
 
 import (
 	"github.com/nchern/homevscorona/backend/api/pkg/model"
 )
 
-func getEvents(ctx *Context) (interface{}, error) {
+func GetEvents(ctx *Context) (interface{}, error) {
 	if ctx.AuthenticatedUser == nil {
 		return nil, errUnknownUserToken(ctx.Token)
 	}
