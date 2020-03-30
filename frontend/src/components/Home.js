@@ -7,6 +7,7 @@ import {BrowserRouter, Route, Redirect} from "react-router-dom";
 import CheckInPerson from "./CheckInPerson";
 import CheckInLocation from "./CheckInLocation";
 import Auth from "./Auth";
+import Config from "./Config";
 
 var getDateArray = function() {
     const end = new Date();
@@ -107,7 +108,7 @@ class Home extends Component {
             'Authorization': 'Bearer ' + Auth.getToken()
         };
         const data = {};
-        const ep = 'http://homevscorona.us.to/api/get_events';
+        const ep = Config.getApiHost() + '/api/get_events';
         axios.post(ep, data, {headers:headers})
         .then(res => res.data)
         .then((data) => {

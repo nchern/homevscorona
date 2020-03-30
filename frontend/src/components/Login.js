@@ -3,6 +3,7 @@ import GoogleLogin from "react-google-login";
 import {Redirect} from "react-router-dom";
 import {Container} from "react-bootstrap";
 import axios from "axios";
+import Config from "./Config";
 
 export default class Login extends Component {
     state = {
@@ -10,7 +11,6 @@ export default class Login extends Component {
     };
     responseGoogle = response => {
         localStorage.setItem('ggToken', response.tokenObj.id_token);
-        this.setState({redirect:true});
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + response.tokenObj.id_token
@@ -19,13 +19,16 @@ export default class Login extends Component {
             'provider': 'google',
             'name': response.profileObj.name
         };
-        const ep = "http://homevscorona.us.to/api/signup";
+        const ep = Config.getApiHost() + "/api/signup";
         axios.post(ep, data, {headers:headers})
-        .then(res => res.json())
+        .then(res => res.data)
         .then((data) => {
-          console.log(data);
+            console.log(data);
+            this.setState({redirect:true});
         })
-        .catch(console.log)
+        .catch((ex) => {
+            console.log(ex);
+        })
       };
 
   render () {
