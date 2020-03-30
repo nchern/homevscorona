@@ -55,7 +55,15 @@ func Handle(fn Handler) func(http.ResponseWriter, *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		log.Printf("INFO %s Authorization: '%s'", r.URL, r.Header.Get(headerAuthorization))
+		if r.Method == "OPTIONS" {
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE, PUT")
+			w.Header().Set("Access-Control-Allow-Headers", "*")
+			w.WriteHeader(status)
+
+			return
+		}
+
+		log.Printf("INFO %s Authorization: len=%d", r.URL, len(r.Header.Get(headerAuthorization)))
 
 		resp, err := fn(r)
 
