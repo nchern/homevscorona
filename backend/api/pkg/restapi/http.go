@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 
@@ -99,12 +98,6 @@ func handleError(r *http.Request, err error) (status int, resp interface{}) {
 
 	status = http.StatusInternalServerError
 
-	if err == io.EOF {
-		// this case handles failed json request parsing when body is empty
-		// TODO: make it more specific
-		panic("")
-		status = http.StatusBadRequest
-	}
 	if errors.Is(err, errAuthFailed) {
 		status = http.StatusUnauthorized
 	}
