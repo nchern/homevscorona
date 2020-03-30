@@ -102,8 +102,14 @@ class Home extends Component {
     }
 
      componentDidMount() {
-         axios.post('http://homevscorona.us.to/api/get_events')
-        .then(res => res.json())
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + Auth.getToken()
+        };
+        const data = {};
+        const ep = 'http://homevscorona.us.to/api/get_events';
+        axios.post(ep, data, {headers:headers})
+        .then(res => res.data)
         .then((data) => {
           this.setState({ events: data['events'],
                                 username: data['user_name']})

@@ -11,7 +11,7 @@ export default class Login extends Component {
     responseGoogle = response => {
         localStorage.setItem('ggToken', response.tokenObj.id_token);
         this.setState({redirect:true});
-        /*const headers = {
+        const headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + response.tokenObj.id_token
         };
@@ -19,13 +19,13 @@ export default class Login extends Component {
             'provider': 'google',
             'name': response.profileObj.name
         };
-        axios.post("http://homevscorona.us.to/api/signup", data,
-            {headers:headers})
+        const ep = "http://homevscorona.us.to/api/signup";
+        axios.post(ep, data, {headers:headers})
         .then(res => res.json())
         .then((data) => {
           console.log(data);
         })
-        .catch(console.log)*/
+        .catch(console.log)
       };
 
   render () {
