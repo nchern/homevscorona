@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 const (
@@ -30,22 +32,15 @@ func authenticate(headers http.Header) (Token, error) {
 
 	tokens := strings.Split(val, " ")
 	if len(tokens) != 2 || tokens[0] != "Bearer" {
-		return nil, fmt.Errorf("%w: bad auth header value; must be: Bearer {token}", errAuthFailed)
+		return nil, fmt.Errorf("%w: bad auth header value; must be: Bearer {token}", errValidationFailed)
 	}
 
 	token := strings.TrimSpace(tokens[1])
 	if token == "" {
-		return nil, fmt.Errorf("%w: empty token", errAuthFailed)
+		return nil, fmt.Errorf("%w: empty token", errValidationFailed)
 	}
 
-	res, err := doDebugAuth(token)
-	if err != nil {
-		return nil, err
-	} else if res != nil {
-		return res, nil
-	}
-
-	res, err = doGoogleAuth(token)
+	res, err := verify(token)
 	if err != nil {
 		return nil, err
 	}
@@ -57,18 +52,27 @@ func authenticate(headers http.Header) (Token, error) {
 
 }
 
-func doDebugAuth(token string) (Token, error) {
-	if token == "123-test-1" {
-		return &googleToken{
-			Email: "test-1@localhost.io",
-		}, nil
+func verify(token string) (Token, error) {
+	segments := strings.Split(token, ".")
+	if len(segments) != 3 {
+		return nil, fmt.Errorf("%w: bad jwt format", errValidationFailed)
 	}
-	if token == "123-test-2" {
-		return &googleToken{
-			Email: "test@localhost.io",
-		}, nil
+
+	var tok jwtToken
+	if err := tok.FromB64String(segments[1]); err != nil {
+		return nil, err
 	}
-	return nil, nil
+
+	if tok.Iss == "test" {
+		// TOOD: add signature using HMAC
+		return &tok, nil
+	}
+
+	res, err := doGoogleAuth(token)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 func doGoogleAuth(token string) (Token, error) {
@@ -78,7 +82,7 @@ func doGoogleAuth(token string) (Token, error) {
 	}
 	defer resp.Body.Close()
 
-	var gtok googleToken
+	var gtok jwtToken
 	if resp.StatusCode != 200 {
 		if resp.StatusCode < 500 {
 			if err := json.NewDecoder(resp.Body).Decode(&gtok); err != nil {
@@ -104,17 +108,24 @@ func doGoogleAuth(token string) (Token, error) {
 	return &gtok, nil
 }
 
-type googleToken struct {
-	// error fields
+type jwtToken struct {
+	// Google error fields
 	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
 
+	// public claims
+	Exp string `json:"exp"`
+	Iss string `json:"iss"`
+	Sub string `json:"sub"`
+	Aud string `json:"aud"`
+	Iat string `json:"iat"`
+	Jti string `json:"jti"`
+	Alg string `json:"alg"`
+
 	// normal fields
-	Iss           string `json:"iss"`
+	Email string `json:"email"`
+
 	Azp           string `json:"azp"`
-	Aud           string `json:"aud"`
-	Sub           string `json:"sub"`
-	Email         string `json:"email"`
 	EmailVerified string `json:"email_verified"`
 	AtHash        string `json:"at_hash"`
 	Name          string `json:"name"`
@@ -122,14 +133,18 @@ type googleToken struct {
 	GivenName     string `json:"given_name"`
 	FamilyName    string `json:"family_name"`
 	Locale        string `json:"locale"`
-	Iat           string `json:"iat"`
-	Exp           string `json:"exp"`
-	Jti           string `json:"jti"`
-	Alg           string `json:"alg"`
 	Kid           string `json:"kid"`
 	Typ           string `json:"typ"`
 }
 
-func (t *googleToken) GetEmail() string {
+func (t *jwtToken) FromB64String(s string) error {
+	b, err := jwt.DecodeSegment(s)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(b, &t)
+}
+
+func (t *jwtToken) GetEmail() string {
 	return t.Email
 }
