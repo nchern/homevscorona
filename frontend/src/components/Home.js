@@ -9,6 +9,7 @@ import CheckInLocation from "./CheckInLocation";
 import Auth from "./Auth";
 import Config from "./Config";
 
+
 var getDateArray = function() {
     const end = new Date();
     const start = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
@@ -50,6 +51,8 @@ class Home extends Component {
     super(props);
     this.handler = this.handler.bind(this);
     this.state = {
+        loginRequired: false,
+
         events: [{
                   "type": "location",
                   "time": 1584910435,
@@ -112,13 +115,22 @@ class Home extends Component {
         axios.post(ep, data, {headers:headers})
         .then(res => res.data)
         .then((data) => {
-          this.setState({ events: data['events'],
-                                username: data['user_name']})
+          this.setState({ events: data['events'], username: data['user_name']});
         })
-        .catch(console.log)
+        .catch((ex) => {
+            console.log(ex.response)
+            const status = ex.response.status;
+            if ( status === 401 || status === 400) {
+                this.setState({ loginRequired: true });
+            }
+        })
       }
 
     render() {
+        if ( this.state.loginRequired ) {
+            return <Redirect to="/login" />
+        }
+
         return (
             <Container>
                 <BrowserRouter>

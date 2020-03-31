@@ -109,8 +109,8 @@ func handleError(r *http.Request, err error) (status int, resp interface{}) {
 	if errors.Is(err, errAuthFailed) {
 		status = http.StatusUnauthorized
 	}
-	if errors.Is(err, errValidationFailed) ||
-		errors.Is(err, errNotFound) {
+
+	if errors.Is(err, errValidationFailed) {
 		status = http.StatusBadRequest
 	}
 

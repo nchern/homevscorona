@@ -22,7 +22,7 @@ type Token interface {
 }
 
 func errUnknownUserToken(t Token) error {
-	return fmt.Errorf("%w: %s", errNotFound, t.GetEmail())
+	return fmt.Errorf("%w: '%s' not found; signup required", errAuthFailed, t.GetEmail())
 }
 
 func authenticate(headers http.Header) (Token, error) {

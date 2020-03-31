@@ -1,13 +1,14 @@
 import React, {Component} from "react";
 import GoogleLogin from "react-google-login";
 import {Redirect} from "react-router-dom";
-import {Container} from "react-bootstrap";
+import {Container, Alert} from "react-bootstrap";
 import axios from "axios";
 import Config from "./Config";
 
 export default class Login extends Component {
     state = {
-        redirect: false
+        redirect: false,
+        showAlert: false
     };
     responseGoogle = response => {
         localStorage.setItem('ggToken', response.tokenObj.id_token);
@@ -28,6 +29,7 @@ export default class Login extends Component {
         })
         .catch((ex) => {
             console.log(ex);
+            this.setState({showAlert: true});
         })
       };
 
@@ -38,6 +40,9 @@ export default class Login extends Component {
       } else {
   return (
       <Container>
+        <Alert variant="danger" show={ this.state.showAlert }>
+            Auth failed!
+        </Alert>
         <div className="Login">
             <h2>Bitte melde dich an!</h2>
             <p>Hi, wir freuen uns, dass du Interesse daran hast, auch ein Corona-Scout zu werden.</p>
