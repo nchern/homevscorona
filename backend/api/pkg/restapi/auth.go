@@ -30,12 +30,13 @@ func errUnknownUserToken(t Token) error {
 func authenticate(headers http.Header) (Token, error) {
 	val := headers.Get(headerAuthorization)
 
-	tokens := strings.Split(val, " ")
-	if len(tokens) != 2 || tokens[0] != "Bearer" {
-		return nil, fmt.Errorf("%w: bad auth header value; must be: Bearer {token}", errValidationFailed)
+	token := ""
+	if _, err := fmt.Sscanf(val, "Bearer %s", &token); err != nil {
+		return nil, err
 	}
 
-	token := strings.TrimSpace(tokens[1])
+	token = strings.TrimSpace(token)
+
 	if token == "" {
 		return nil, fmt.Errorf("%w: empty token", errValidationFailed)
 	}
@@ -109,6 +110,7 @@ func doGoogleAuth(token string) (Token, error) {
 }
 
 type jwtToken struct {
+
 	// Google error fields
 	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
