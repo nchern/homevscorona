@@ -19,6 +19,13 @@ type newEventRequest struct {
 	Details eventDetails `json:"details"`
 }
 
+func (er newEventRequest) GetTime() time.Time {
+	if er.Time == 0 {
+		return time.Now()
+	}
+	return time.Unix(er.Time, 0)
+}
+
 type eventDetails struct {
 	Users []*model.User `json:"users"`
 }
@@ -33,7 +40,7 @@ func NewEvent(ctx *Context) (interface{}, error) {
 		return nil, err
 	}
 
-	event := &model.Event{ID: uuid.New().String(), Timestamp: time.Unix(req.Time, 0)}
+	event := &model.Event{ID: uuid.New().String(), Timestamp: req.GetTime()}
 
 	switch req.Type {
 	case eventPerson:

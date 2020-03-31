@@ -29,10 +29,10 @@ func authenticate(headers http.Header) (Token, error) {
 	val := headers.Get(headerAuthorization)
 
 	tokens := strings.Split(val, " ")
-	if len(tokens) != 2 {
-		return nil, errAuthFailed
+	if len(tokens) != 2 || tokens[0] != "Bearer" {
+		return nil, fmt.Errorf("%w: bad auth header value; must be: Bearer {token}", errAuthFailed)
 	}
-	// TODO: check bearer?
+
 	token := strings.TrimSpace(tokens[1])
 	if token == "" {
 		return nil, fmt.Errorf("%w: empty token", errAuthFailed)
