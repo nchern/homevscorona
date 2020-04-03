@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -31,14 +32,13 @@ func authenticate(headers http.Header) (Token, error) {
 	val := headers.Get(headerAuthorization)
 
 	token := ""
-	if _, err := fmt.Sscanf(val, "Bearer %s", &token); err != nil {
+	if _, err := fmt.Sscanf(val, "Bearer %s", &token); err != nil && err != io.EOF {
 		return nil, err
 	}
 
 	token = strings.TrimSpace(token)
-
 	if token == "" {
-		return nil, fmt.Errorf("%w: empty token", errValidationFailed)
+		return nil, fmt.Errorf("%w: empty token", errAuthFailed)
 	}
 
 	res, err := verify(token)
@@ -53,23 +53,18 @@ func authenticate(headers http.Header) (Token, error) {
 
 }
 
-func verify(token string) (Token, error) {
-	segments := strings.Split(token, ".")
-	if len(segments) != 3 {
-		return nil, fmt.Errorf("%w: bad jwt format", errValidationFailed)
-	}
-
-	var tok jwtToken
-	if err := tok.FromB64String(segments[1]); err != nil {
+func verify(rawToken string) (Token, error) {
+	claims := &testToken{}
+	_, _, err := new(jwt.Parser).ParseUnverified(rawToken, claims)
+	if err != nil {
 		return nil, err
 	}
-
-	if tok.Iss == "test" {
-		// TOOD: add signature using HMAC
-		return &tok, nil
+	if claims.Issuer == "test" {
+		// TOOD: add signature validation using HMAC
+		return claims, nil
 	}
 
-	res, err := doGoogleAuth(token)
+	res, err := doGoogleAuth(rawToken)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +78,7 @@ func doGoogleAuth(token string) (Token, error) {
 	}
 	defer resp.Body.Close()
 
-	var gtok jwtToken
+	var gtok googleToken
 	if resp.StatusCode != 200 {
 		if resp.StatusCode < 500 {
 			if err := json.NewDecoder(resp.Body).Decode(&gtok); err != nil {
@@ -109,8 +104,17 @@ func doGoogleAuth(token string) (Token, error) {
 	return &gtok, nil
 }
 
-type jwtToken struct {
+type testToken struct {
+	jwt.StandardClaims
 
+	Email string `json:"email"`
+}
+
+func (t *testToken) GetEmail() string {
+	return t.Email
+}
+
+type googleToken struct {
 	// Google error fields
 	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
@@ -122,11 +126,11 @@ type jwtToken struct {
 	Aud string `json:"aud"`
 	Iat string `json:"iat"`
 	Jti string `json:"jti"`
-	Alg string `json:"alg"`
 
 	// normal fields
 	Email string `json:"email"`
 
+	Alg           string `json:"alg"`
 	Azp           string `json:"azp"`
 	EmailVerified string `json:"email_verified"`
 	AtHash        string `json:"at_hash"`
@@ -139,14 +143,6 @@ type jwtToken struct {
 	Typ           string `json:"typ"`
 }
 
-func (t *jwtToken) FromB64String(s string) error {
-	b, err := jwt.DecodeSegment(s)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, &t)
-}
-
-func (t *jwtToken) GetEmail() string {
+func (t *googleToken) GetEmail() string {
 	return t.Email
 }
