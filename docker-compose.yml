@@ -22,6 +22,11 @@ services:
             - cor-net
         expose:
             - "8080"
+        environment:
+            DB_HOST: db
+			DB_USER: root
+			DB_NAME: maindb
+			DB_PASSWORD: ${POSTGRES_PASSWORD}
     balancer:
         build:
             context: infra/nginx/.
