@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Button, Container, Switch} from "react-bootstrap";
+import {Alert, Button, Container, Switch} from "react-bootstrap";
 import ConnectionDay from "./ConnectionDay";
 import "./Home.css";
 import axios from "axios";
@@ -52,7 +52,7 @@ class Home extends Component {
     this.handler = this.handler.bind(this);
     this.state = {
         loginRequired: false,
-
+        showAlert: false,
         events: [{
                   "type": "location",
                   "time": 1584910435,
@@ -118,11 +118,15 @@ class Home extends Component {
           this.setState({ events: data['events'], username: data['user_name']});
         })
         .catch((ex) => {
-            console.log(ex.response)
-            const status = ex.response.status;
-            if ( status === 401 || status === 400) {
-                this.setState({ loginRequired: true });
+            console.log(ex);
+            if ( ex.response ) {
+                const status = ex.response.status;
+                if ( status === 401 || status === 400) {
+                    this.setState({ loginRequired: true });
+                    return;
+                }
             }
+            this.setState({ showAlert: true });
         })
       }
 
@@ -142,6 +146,9 @@ class Home extends Component {
                       <CheckInLocation handler={this.handler}/>
                   </PrivateRoute>
                   <Route exact path="/">
+                      <div>
+                        <Alert variant="danger" show={ this.state.showAlert }>Server Fehler!</Alert>
+                      </div>
                       <div>
                         <h1>Hallo {this.state.username}</h1>
                         <p>Hier kannst du deine letzten Kontakte und Orte eintragen.</p>
