@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+  cor-net:
+    driver: bridge
+
+volumes:
+    pg-data:
+
+services:
+    db:
+        image: postgres:11-alpine
+        restart: on-failure
+        volumes:
+            - pg-data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: maindb
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: root
+        networks:
+            - cor-net
+        ports:
+            - "5432:5432"
+        expose:
+          - "5432"

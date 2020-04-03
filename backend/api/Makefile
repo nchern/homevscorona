@@ -10,6 +10,11 @@ OUT=$(NAME)
 install-deps:
 	# use your chosen dependency management system
 	@go get -d ./...
+	@go get -u github.com/xo/xo
+
+.PHONY: generate-db-code
+generate-db-code:
+	@xo "pgsql://root:root@localhost/maindb?sslmode=disable" -o "pkg/store/pgstore" --template-path "pkg/store/pgstore/xo-templates"
 
 .PHONY: lint
 lint:

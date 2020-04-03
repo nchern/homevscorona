@@ -1,5 +1,12 @@
 version: "3"
 
+networks:
+  cor-net:
+    driver: bridge
+
+volumes:
+    pg-data:
+
 services:
     frontend:
         build:
@@ -11,6 +18,8 @@ services:
         build:
             context: backend/api/.
         restart: on-failure
+        networks:
+            - cor-net
         expose:
             - "8080"
     balancer:
@@ -18,6 +27,19 @@ services:
             context: infra/nginx/.
         restart: on-failure
         ports:
-             - "80:80"
+            - "80:80"
         expose:
             - "80"
+    db:
+        image: postgres:11-alpine
+        restart: on-failure
+        volumes:
+            - pg-data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: maindb
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        networks:
+            - cor-net
+        expose:
+          - "5432"
