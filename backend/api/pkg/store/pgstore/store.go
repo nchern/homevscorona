@@ -37,8 +37,8 @@ func (u *UserStore) Create(email string, user *model.User) error {
 		Body:    body,
 	}).ToBuilder()
 
-	sql, args := builder.Build()
-	_, err = u.db.Exec(sql, args...)
+	stmt, args := builder.Build()
+	_, err = u.db.Exec(stmt, args...)
 
 	switch e := err.(type) {
 	case *pq.Error:
@@ -53,7 +53,7 @@ func (u *UserStore) Create(email string, user *model.User) error {
 
 func (u *UserStore) GetByEmail(email string) (*model.User, error) {
 	builder := sqlbuilder.PostgreSQL.NewSelectBuilder()
-	sql, args := builder.
+	stmt, args := builder.
 		Select(
 			UserList.ID(),
 			UserList.Body(),
@@ -64,9 +64,12 @@ func (u *UserStore) GetByEmail(email string) (*model.User, error) {
 		).
 		Build()
 
-	res := u.db.QueryRow(sql, args...)
+	res := u.db.QueryRow(stmt, args...)
 	tuple := &UserListTuple{}
 	if err := res.Scan(&tuple.ID, &tuple.Body); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
 	var user model.User
@@ -93,8 +96,8 @@ func (u *UserStore) SaveEvent(userID string, event *model.Event) error {
 		Body:    body,
 	}).ToBuilder()
 
-	sql, args := builder.Build()
-	_, err = u.db.Exec(sql, args...)
+	stmt, args := builder.Build()
+	_, err = u.db.Exec(stmt, args...)
 	return err
 }
 
@@ -102,7 +105,7 @@ func (u *UserStore) GetEvents(userID string) ([]*model.Event, error) {
 	results := []*model.Event{}
 
 	builder := sqlbuilder.PostgreSQL.NewSelectBuilder()
-	sql, args := builder.
+	stmt, args := builder.
 		Select(
 			Event.ID(),
 			Event.Body(),
@@ -113,7 +116,7 @@ func (u *UserStore) GetEvents(userID string) ([]*model.Event, error) {
 		).
 		Build()
 
-	rows, err := u.db.Query(sql, args...)
+	rows, err := u.db.Query(stmt, args...)
 	if err != nil {
 		return nil, err
 	}

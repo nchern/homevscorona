@@ -9,7 +9,8 @@ DB_HOST="db"
 DB_NAME="maindb"
 
 DB_USER="root"
-DB_PASSWORD="root"
+DB_PASSWORD=${DB_PASSWORD:-"root"}
+
 
 NETWORK="homevscorona_cor-net"
 
